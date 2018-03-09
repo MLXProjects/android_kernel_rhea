@@ -569,4 +569,4 @@ module_init(uhid_init);
 module_exit(uhid_exit);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("David Herrmann <dh.herrmann@gmail.com>");
-MODULE_DESCRIPTION("User-space I/O driver support for HID subsystem")
+MODULE_DESCRIPTION("User-space I/O driver support for HID subsystem");
