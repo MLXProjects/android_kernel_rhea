@@ -205,6 +205,7 @@ int __init omap_mux_init_signal(const char *muxname, int val)
 static int rhea_wifi_cd = 0; /* WIFI virtual 'card detect' status */
 static void (*wifi_status_cb)(int card_present, void *dev_id);
 static void *wifi_status_cb_devid;
+static struct regulator *clk32kaudio_reg;
 
 int rhea_wifi_status_register(
 		void (*callback)(int card_present, void *dev_id),
@@ -243,9 +244,9 @@ static int rhea_wifi_set_carddetect(int val)
 		printk(KERN_ERR " %s CALLBACK COMPLETE\n",__FUNCTION__);	
 	} else
 		pr_warning("%s: Nobody to notify\n", __func__);
-
-//	if (val == 0)
-//		bcm_sdiowl_term();
+	
+	if(val==0)
+		bcm_sdiowl_term();
 	return 0;
 }
 
@@ -259,6 +260,37 @@ struct fixed_voltage_data {
 	unsigned startup_delay;
 	bool enable_high;
 	bool is_enabled;
+};
+
+static struct regulator_consumer_supply rhea_vmmc5_supply = {
+	.supply = "vmmc",
+	.dev_name = "omap_hsmmc.4",
+};
+
+static struct regulator_init_data rhea_vmmc5 = {
+	.constraints = {
+		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies = 1,
+	.consumer_supplies = &rhea_vmmc5_supply,
+};
+
+static struct fixed_voltage_config rhea_vwlan = {
+	.supply_name = "vwl1271",
+	.microvolts = 2000000, /* 2.0V */
+	.gpio = GPIO_WLAN_PMENA,
+	.startup_delay = 70000, /* 70msec */
+	.enable_high = 1,
+	.enabled_at_boot = 0,
+	.init_data = &rhea_vmmc5,
+};
+
+static struct platform_device omap_vwlan_device = {
+	.name		= "reg-fixed-voltage",
+	.id		= 1,
+	.dev = {
+		.platform_data = &rhea_vwlan,
+	},
 };
 
 static int rhea_wifi_power(int on)
@@ -287,7 +319,7 @@ static int rhea_wifi_power(int on)
 	bcm_sdiowl_init(on);
 
 	rhea_wifi_power_state = on;
-
+	
 	return 0;
 }
 
@@ -337,6 +369,7 @@ __setup("androidboot.macaddr=", rhea_mac_addr_setup);
 
 static int rhea_wifi_get_mac_addr(unsigned char *buf)
 {
+	int type = omap4_rhea_get_type();
 	uint rand_mac;
 
 //	if (type != RHEA_TYPE_TORO)
@@ -428,8 +461,8 @@ static void *rhea_wifi_get_country_code(char *ccode)
 static struct resource rhea_wifi_resources[] = {
 	[0] = {
 		.name		= "bcmdhd_wlan_irq",
-		.start		= gpio_to_irq(14),	//GPIO14
-		.end			= gpio_to_irq(14),	//GPIO14
+		.start		= gpio_to_irq(7),	//GPIO7
+		.end		= gpio_to_irq(7),	//GPIO7
 		.flags          = IORESOURCE_IRQ | IORESOURCE_IRQ_LOWEDGE/* IORESOURCE_IRQ_HIGHLEVEL */| IORESOURCE_IRQ_SHAREABLE,
 	},
 };
@@ -471,7 +504,7 @@ static void __init rhea_wlan_gpio(void)
 {
 	pr_debug("%s: start\n", __func__);
 	//sangbo.sim : For IORA issue
-	rhea_wifi_power(0);
+	//rhea_wifi_power(0);
 }
 
 int __init rhea_wlan_init(void)
@@ -479,8 +512,8 @@ int __init rhea_wlan_init(void)
 	pr_debug("%s: start\n", __func__);
 	printk(KERN_ERR " %s Calling GPIO INIT!\n",__FUNCTION__);
 
-	rhea_wlan_gpio();
-	printk(KERN_ERR " %s Calling GPIO INIT DONE !\n",__FUNCTION__);
+//	rhea_wlan_gpio();
+//	printk(KERN_ERR " %s Calling GPIO INIT DONE !\n",__FUNCTION__);
 #ifdef CONFIG_BROADCOM_WIFI_RESERVED_MEM
 	rhea_init_wifi_mem();
 #endif
