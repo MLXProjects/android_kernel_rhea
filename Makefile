@@ -260,6 +260,7 @@ KBUILD_BUILTIN := 1
 #	make sure the checksums are up to date before we record them.
 
 ifeq ($(MAKECMDGOALS),modules)
+  CFLAGS_MODULE = -fno-pic
   KBUILD_BUILTIN := $(if $(CONFIG_MODVERSIONS),1)
 endif
 

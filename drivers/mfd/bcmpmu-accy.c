@@ -483,10 +483,9 @@ int bcmpmu_set_uas_switch_enable(u32 uas_switch, bool enable)
 }
 EXPORT_SYMBOL_GPL(bcmpmu_set_uas_switch_enable);
 
-#if defined(CONFIG_TSP_SETTING_FOR_TA_USB_IN)
+
 extern void set_tsp_for_ta_detect(int state);//TSP Charging[JG]
 int tsp_charger_type_status=0;//TSP Charging[JG]
-#endif
 
 static void send_usb_event(struct bcmpmu *pmu,
 			   enum bcmpmu_event_t event, void *para)
@@ -518,7 +517,7 @@ static void send_usb_event(struct bcmpmu *pmu,
 			propval.intval = 0;
 		ps->set_property(ps, POWER_SUPPLY_PROP_ONLINE, &propval);
 
-#if defined(CONFIG_TSP_SETTING_FOR_TA_USB_IN)
+//#if defined(CONFIG_TSP_SETTING_FOR_TA_USB_IN)
 		if(propval.intval==1)
 		{
 			// usb in
@@ -532,7 +531,7 @@ static void send_usb_event(struct bcmpmu *pmu,
 			set_tsp_for_ta_detect(0);//TSP Charging[JG]			
 
 		}
-#endif		
+//#endif		
 		power_supply_changed(ps);
 	}
 }
