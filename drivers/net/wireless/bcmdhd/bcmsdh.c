@@ -31,7 +31,7 @@
 
 /* ****************** BCMSDH Interface Functions *************************** */
 
-//#include <typedefs.h>
+#include <typedefs.h>
 #include <bcmdevs.h>
 #include <bcmendian.h>
 #include <bcmutils.h>

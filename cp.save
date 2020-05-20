@@ -1,0 +1,29 @@
+cp crypto/ansi_cprng.ko ./modules/
+cp drivers/media/video/gspca/gspca_main.ko ./modules/
+cp drivers/scsi/scsi_wait_scan.ko ./modules/
+cp frandom/frandom.ko ./modules/
+cp drivers/net/wireless/bcmdhd/dhd.ko ./modules/
+
+./frandom/frandom.ko
+./arch/arm/plat-kona/.kona_pm.o.cmd
+./arch/arm/plat-kona/.kona_avs.o.cmd
+./arch/arm/plat-kona/.kona_mic_bias.o.cmd
+./arch/arm/plat-kona/.kona_cpufreq.o.cmd
+./arch/arm/plat-kona/.kona_timer.o.cmd
+./arch/arm/plat-kona/.kona_pm_dbg.o.cmd
+./modules/ansi_cprng.ko
+./modules/gspca_main.ko
+./modules/frandom.ko
+./modules/scsi_wait_scan.ko
+./crypto/ansi_cprng.ko
+./crypto/.ansi_cprng.ko.cmd
+./drivers/input/misc/.kona_headset_multi_button.o.cmd
+./drivers/media/video/gspca/gspca_main.ko
+./drivers/media/video/gspca/.gspca_main.ko.cmd
+./drivers/scsi/.scsi_wait_scan.ko.cmd
+./drivers/scsi/scsi_wait_scan.ko
+./drivers/mmc-poll/.kona_mmc.o.cmd
+./drivers/pwm/.kona-pwmc.o.cmd
+./drivers/net/wireless/bcmdhd/.dhd.ko.cmd
+./drivers/net/wireless/bcmdhd/dhd.ko
+
