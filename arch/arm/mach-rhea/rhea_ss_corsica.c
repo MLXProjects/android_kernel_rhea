@@ -500,7 +500,7 @@ struct platform_device bcm_kp_device = {
 };
 
 /*
- * Keymap for Corsica board
+ * Keymap for Coriplus board
  */
 static struct bcm_keymap newKeymap[] = {
 	{BCM_KEY_ROW_0, BCM_KEY_COL_0, "unused", 0},
@@ -2593,7 +2593,7 @@ void __init board_map_io(void)
 late_initcall(rhea_ray_add_lateInit_devices);
 
 
-MACHINE_START(RHEA, "rhea_ss_corsica")
+MACHINE_START(RHEA, "rhea_ss_coriplus")
 	.map_io = board_map_io,
 	.init_irq = kona_init_irq,
 	.timer  = &kona_timer,
