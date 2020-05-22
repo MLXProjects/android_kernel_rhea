@@ -808,21 +808,20 @@ int d2083_device_init(struct d2083 *d2083, int irq,
     d2083_reg_write(d2083, D2083_SP_CTRL_REG,0xCC);
     
     // LDO 
-	d2083_set_var_bits(d2083, D2083_LDO1_REG, D2083_LDO_VOL_MASK, 0x00); //LDO 1 1.2V	// spare
-	d2083_set_var_bits(d2083, D2083_LDO3_REG, D2083_LDO_VOL_MASK, 0x24); //LDO 3 3.0V	// VDD_SENSOR_3.0V
-	d2083_set_var_bits(d2083, D2083_LDO6_REG, D2083_LDO_VOL_MASK, 0x20); //LDO 6 2.8V	// VCAM_A_2.8V
-	d2083_set_var_bits(d2083, D2083_LDO7_REG, D2083_LDO_VOL_MASK, 0x2A); //LDO 7 3.3V	// VDD_VIB_3.3V
-	d2083_set_var_bits(d2083, D2083_LDO8_REG, D2083_LDO_VOL_MASK, 0x24); //LDO 8 3.0V	// VLCD_3.0V
-	d2083_set_var_bits(d2083, D2083_LDO9_REG, D2083_LDO_VOL_MASK, 0x24); //LDO 9 3.0V	// VDD_SDXC
+    d2083_reg_write(d2083, D2083_LDO1_REG, 0x00); //LDO 1 1.2V    // spare
+    d2083_reg_write(d2083, D2083_LDO3_REG, 0x24); //LDO 3 3.0V    // VDD_SENSOR_3.0V
+    d2083_reg_write(d2083, D2083_LDO6_REG, 0x20); //LDO 6 2.8V    // VCAM_A_2.8V
+    d2083_reg_write(d2083, D2083_LDO7_REG, 0x2A); //LDO 7 3.3V    // VDD_VIB_3.3V
+    d2083_reg_write(d2083, D2083_LDO8_REG, 0x64); //LDO 8 3.0V    // VLCD_3.0V
+    d2083_reg_write(d2083, D2083_LDO9_REG, 0x24); //LDO 9 3.0V    // VDD_SDXC
 
-	d2083_set_var_bits(d2083, D2083_LDO11_REG, D2083_LDO_VOL_MASK, 0x24); //LDO 11 3.0V	// VSIM1_3.0V
-	d2083_set_var_bits(d2083, D2083_LDO13_REG, D2083_LDO_VOL_MASK, 0x24); //LDO 13 3.0V	// VDD_SDIO_3.0V
-	d2083_set_var_bits(d2083, D2083_LDO14_REG, D2083_LDO_VOL_MASK, 0x0C); //LDO 14 1.8V	// VTOUCH_1.8V
-	d2083_set_var_bits(d2083, D2083_LDO15_REG, D2083_LDO_VOL_MASK, 0x2A); //LDO 15 3.3V	// VTOUCH_3.3V
-	d2083_set_var_bits(d2083, D2083_LDO16_REG, D2083_LDO_VOL_MASK, 0x0C); //LDO 16 1.8V	// VCAMC_IO_1.8V
-	d2083_set_var_bits(d2083, D2083_LDO17_REG, D2083_LDO_VOL_MASK, 0x20); //LDO 17 2.8V	// VCAM_AF_2.8V
-	// BUCK
-	d2083_set_var_bits(d2083, D2083_BUCK4_REG, D2083_BUCK4_VOL_MASK, 0x54); //BUCK 4 3.3V	// VDD_3G_PAM_3.3V
+    d2083_reg_write(d2083, D2083_LDO11_REG, 0x24); //LDO 11 3.0V    // VSIM1_3.0V
+    d2083_reg_write(d2083, D2083_LDO13_REG, 0x24); //LDO 13 3.0V    // VDD_SDIO_3.0V
+    d2083_reg_write(d2083, D2083_LDO14_REG, 0xC ); //LDO 14 1.8V    // VTOUCH_1.8V
+    d2083_reg_write(d2083, D2083_LDO15_REG, 0x2A); //LDO 15 3.3V    // VTOUCH_3.3V
+    d2083_reg_write(d2083, D2083_LDO16_REG, 0xC ); //LDO 16 1.8V    // VCAMC_IO_1.8V
+    d2083_reg_write(d2083, D2083_LDO17_REG, 0x20); //LDO 17 2.8V    // VCAM_AF_2.8V
+    d2083_reg_write(d2083, D2083_BUCK4_REG, 0x54); //BUCK 4 3.3V	// VDD_3G_PAM_3.3V
 #endif
 
     d2083_reg_write(d2083,D2083_BBATCONT_REG,0x1F);
@@ -939,29 +938,35 @@ void d2083_device_exit(struct d2083 *d2083)
 
 	d2083_free_irq(d2083, D2083_IRQ_EVDD_MON);
 	d2083_irq_exit(d2083);
+
+#ifdef D2083_INT_USE_THREAD
+    	if(d2083->irq_task)
+	    kthread_stop(d2083->irq_task);
+#endif
 }
 EXPORT_SYMBOL_GPL(d2083_device_exit);
 
 extern int d2083_get_last_vbat_adc(void);
-extern int d2083_get_last_capacity(void);
+extern int d2083_get_last_temp_adc(void);
 
 int d2083_shutdown(struct d2083 *d2083)
 {
 	u8 dst;
-	u32 capacity, last_adc;
+	//int ret;
+	int last_adc;
 
 	dlg_info("%s\n", __func__);
 
 	if (d2083->read_dev == NULL)
 		return -ENODEV;
 
-	d2083_reg_write(d2083, D2083_BUCK1_REG, 0x63);
+	last_adc=d2083_get_last_vbat_adc();
+		
+	d2083_reg_write(d2083, D2083_GPID3_REG, (0xFF&last_adc)); //8 LSB
+	d2083_reg_write(d2083, D2083_GPID4_REG, (0xF&(last_adc>>8))); // 4 MSB
 
-	capacity = d2083_get_last_capacity();
-	d2083_reg_write(d2083, D2083_GPID3_REG, (0xFF & capacity));
-	d2083_reg_write(d2083, D2083_GPID4_REG, (0x0F & (capacity>>8)));
-
-	last_adc = d2083_get_last_vbat_adc();
+	last_adc=d2083_get_last_temp_adc();
+		
 	d2083_reg_write(d2083, D2083_GPID5_REG, (0xFF&last_adc)); //8 LSB
 	d2083_reg_write(d2083, D2083_GPID6_REG, (0xF&(last_adc>>8))); // 4 MSB
 	
