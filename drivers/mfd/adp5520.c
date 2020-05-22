@@ -327,10 +327,7 @@ static int adp5520_suspend(struct device *dev)
 	struct i2c_client *client = to_i2c_client(dev);
 	struct adp5520_chip *chip = dev_get_drvdata(&client->dev);
 
-	adp5520_read(chip->dev, ADP5520_MODE_STATUS, &chip->mode);
-	/* All other bits are W1C */
-	chip->mode &= ADP5520_BL_EN | ADP5520_DIM_EN | ADP5520_nSTNBY;
-	adp5520_write(chip->dev, ADP5520_MODE_STATUS, 0);
+	adp5520_clr_bits(chip->dev, ADP5520_MODE_STATUS, ADP5520_nSTNBY);
 	return 0;
 }
 
@@ -339,7 +336,7 @@ static int adp5520_resume(struct device *dev)
 	struct i2c_client *client = to_i2c_client(dev);
 	struct adp5520_chip *chip = dev_get_drvdata(&client->dev);
 
-	adp5520_write(chip->dev, ADP5520_MODE_STATUS, chip->mode);
+	adp5520_set_bits(chip->dev, ADP5520_MODE_STATUS, ADP5520_nSTNBY);
 	return 0;
 }
 #endif
