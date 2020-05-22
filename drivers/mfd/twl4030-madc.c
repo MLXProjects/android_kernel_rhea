@@ -510,7 +510,7 @@ int twl4030_madc_conversion(struct twl4030_madc_request *req)
 	u8 ch_msb, ch_lsb;
 	int ret;
 
-	if (!req || !twl4030_madc)
+	if (!req)
 		return -EINVAL;
 
 	mutex_lock(&twl4030_madc->lock);

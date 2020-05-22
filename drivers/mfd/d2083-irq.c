@@ -170,6 +170,55 @@ void d2083_irq_worker(struct work_struct *work)
 }
 
 
+#ifdef D2083_INT_USE_THREAD
+/*
+ * This is a threaded IRQ handler so can access I2C/SPI.  Since all
+ * interrupts are clear on read the IRQ line will be reasserted and
+ * the physical IRQ will be handled again if another interrupt is
+ * asserted while we run - in the normal course of events this is a
+ * rare occurrence so we save I2C/SPI reads.
+ */
+void d2083_irq_thread(void *d2083_irq_tcb)
+{
+	struct d2083 *d2083 = (struct d2083 *)d2083_irq_tcb;
+	u8 sub_reg[D2083_NUM_IRQ_EVT_REGS];
+	int read_done[D2083_NUM_IRQ_EVT_REGS];
+	struct d2083_irq_data *data;
+	int i;
+
+
+    //set_freezable();
+    printk(KERN_ERR "d2083_irq_thread start  !!!!!! \n");
+    while(!kthread_should_stop())
+    {
+        set_current_state(TASK_INTERRUPTIBLE);
+    	memset(&read_done, 0, sizeof(read_done));
+
+    	for (i = 0; i < ARRAY_SIZE(d2083_irqs); i++) {
+    		data = &d2083_irqs[i];
+
+    		if (!read_done[data->reg]) {
+    			sub_reg[data->reg] =
+    				d2083_reg_read(d2083, D2083_EVENTA_REG + data->reg);
+    			sub_reg[data->reg] &=
+    				~d2083_reg_read(d2083, D2083_IRQMASKA_REG + data->reg);
+    			read_done[data->reg] = 1;
+    		}
+
+    		if (sub_reg[data->reg] & data->mask) {
+    			d2083_irq_call_handler(d2083, i);
+				/* Now clear EVENT registers */
+				d2083_set_bits(d2083, D2083_EVENTA_REG + data->reg, d2083_irqs[i].mask);
+				//dev_info(d2083->dev, "\nIRQ Register [%d] MASK [%d]\n",D2083_EVENTA_REG + data->reg, d2083_irqs[i].mask);
+			}
+		}
+
+    	enable_irq(d2083->chip_irq);
+	}
+}
+#endif /* D2083_INT_USE_THREAD */
+
+
 static irqreturn_t d2083_irq(int irq, void *data)
 {
 	struct d2083 *d2083 = data;

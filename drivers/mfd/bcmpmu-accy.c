@@ -233,7 +233,7 @@ static enum bcmpmu_chrgr_type_t _get_charger_type(struct bcmpmu_accy *paccy,
 		else if (bc_status & PMU_BC_STS_TYPE1_MSK)
 			type = PMU_CHRGR_TYPE_TYPE1;
 		else if (bc_status & PMU_BC_STS_TYPE2_MSK)
-			type = PMU_CHRGR_TYPE_TYPE2;
+			type = PMU_CHRGR_TYPE_DCP;
 		else if (bc_status & PMU_BC_STS_ACA_MSK)
 			type = PMU_CHRGR_TYPE_ACA;
 		else
