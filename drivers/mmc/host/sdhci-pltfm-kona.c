@@ -71,9 +71,7 @@
 #define SD_DETECT_GPIO_DEBOUNCE_128MS	128
 
 #define KONA_SDMMC_DISABLE_DELAY	(100)
-#define KONA_SDMMC_OFF_TIMEOUT		(180000) /* (8000) */
-unsigned int sdmmc_off_timeout=KONA_SDMMC_OFF_TIMEOUT;
-
+#define KONA_SDMMC_OFF_TIMEOUT		(8000)
 
 enum {ENABLED = 0, DISABLED, OFF};
 
@@ -112,6 +110,7 @@ static struct sdio_dev *gDevs[SDIO_DEV_TYPE_MAX];
 static int sdhci_pltfm_regulator_init(struct sdio_dev *dev, char *reg_name);
 static int sdhci_pltfm_regulator_sdxc_init(struct sdio_dev *dev,
 					   char *reg_name);
+static int sdhci_kona_anystate_to_off(struct sdio_dev *dev);
 static int sdhci_kona_off_to_enabled(struct sdio_dev *dev);
 
 static int sdhci_pltfm_clk_enable(struct sdhci_host *host, int enable);
@@ -147,48 +146,13 @@ static unsigned int sdhci_get_timeout_clock(struct sdhci_host *host)
 	return sdhci_get_max_clk(host);
 }
 
-int	sdhci_pltfm_set_timeout(struct sdhci_host *host, unsigned int timeout)
-{
-	struct sdio_dev *dev = sdhci_priv(host);
-
-
-	if(dev->devtype ==SDIO_DEV_TYPE_SDMMC ){
-		sdmmc_off_timeout = timeout;
-		return 0;
-	}
-	else{
-		printk("%s - No SD Card Type, Can Not Set Timeout\n",__func__);
-		return -EPERM;
-	}
-
-}
-int	sdhci_pltfm_get_timeout(struct sdhci_host *host,bool def_val,unsigned int *timeout)
-{
-	struct sdio_dev *dev = sdhci_priv(host);
-
-	if(dev->devtype ==SDIO_DEV_TYPE_SDMMC ){
-		if(def_val)
-			*timeout = KONA_SDMMC_OFF_TIMEOUT;
-		else
-			*timeout = sdmmc_off_timeout;
-		return 0;
-	}
-	else{
-		printk("%s - No SD Card Type, Can Not Set Timeout\n",__func__);
-		return -EPERM;
-	}
-}
-
-
 static struct sdhci_ops sdhci_pltfm_ops = {
 	.get_max_clk = sdhci_get_max_clk,
 	.get_timeout_clock = sdhci_get_timeout_clock,
 	.clk_enable = sdhci_pltfm_clk_enable,
 	.set_signalling = sdhci_pltfm_set_signalling,
 	.platform_set = sdhci_pltfm_set,
-	.platform_send_init_74_clocks = sdhci_pltfm_init_74_clocks,
-	.platform_set_timeout = sdhci_pltfm_set_timeout,
-	.platform_get_timeout = sdhci_pltfm_get_timeout,
+	.platform_send_init_74_clocks = sdhci_pltfm_send_init_74_clocks,
 };
 
 void sdhci_pltfm_send_init_74_clocks (struct sdhci_host *host,u8 power_mode)
@@ -211,7 +175,7 @@ void sdhci_pltfm_send_init_74_clocks (struct sdhci_host *host,u8 power_mode)
 				sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
 				sd_bus_power_off = 1;
 			}
-			mdelay(1);
+			mdelay(2); // 1ms -> 2ms
 			clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
 			clk &= ~SDHCI_CLOCK_CARD_EN;
 			sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);			
@@ -355,7 +319,7 @@ proc_card_ctrl_read(char *buffer, char **start, off_t off, int count,
 	if (off > 0)
 		return 0;
 
-	len += scnprintf(buffer + len, PAGE_SIZE, "SD/MMC card is %s\n",
+	len += sprintf(buffer + len, "SD/MMC card is %s\n",
 		       sdhci_readl(host,
 				   KONA_SDHOST_CORESTAT) & KONA_SDHOST_CD_SW ?
 		       "INSERTED" : "NOT INSERTED");
@@ -777,7 +741,7 @@ static int __devinit sdhci_pltfm_probe(struct platform_device *pdev)
 		dev_err(dev->dev, "During Booting before power on -->Pull-Down CMD/DAT Line  \r\n");
 		hw_cfg->configure_sdio_pullup(0);
 	}
-
+	
 	ret = bcm_kona_sd_init(dev);
 	if (ret)
 		goto err_reset;
@@ -1053,6 +1017,7 @@ static int sdhci_pltfm_suspend(struct platform_device *pdev, pm_message_t state)
 
 	if(dev->devtype == SDIO_DEV_TYPE_SDMMC)
 	{
+		printk(KERN_ERR "mmc regulator off.. delay 50ms added\n");
 		mdelay(50);// this is Samsung internal specification.		
 	}
 
@@ -1210,7 +1175,7 @@ static int sdhci_pltfm_regulator_sdxc_init(struct sdio_dev *dev, char *reg_name)
 	dev->vdd_sdxc_regulator = regulator_get(NULL, reg_name);
 
 	if (!IS_ERR(dev->vdd_sdxc_regulator)) {
-		/* Configure 3.0V default */
+			/* Configure 3.0V default */
 		ret = regulator_set_voltage(dev->vdd_sdxc_regulator,
 						3000000, 3000000);
 		if (ret < 0) {
@@ -1218,10 +1183,10 @@ static int sdhci_pltfm_regulator_sdxc_init(struct sdio_dev *dev, char *reg_name)
 				   reg_name);
 			ret = -1;
 		} else {
-			printk("%s: set to 3.0V\n",
-				reg_name);
-			ret = 0;
-		}
+			pr_debug("%s: set to 3.0V\n",
+					reg_name);
+				ret = 0;
+			}
 	} else {
 		pr_err("%s: could not get sdxc regulator\n", reg_name);
 		/* We have found out the errno and need not do IS_ERR
@@ -1248,7 +1213,7 @@ static int sdhci_pltfm_regulator_init(struct sdio_dev *dev, char *reg_name)
 				   reg_name);
 			ret = -1;
 		} else {
-			printk("%s: set to 3.0V\n",
+			pr_debug("%s: set to 3.0V\n",
 				reg_name);
 			ret = 0;
 		}
@@ -1311,8 +1276,7 @@ int sdhci_kona_sdio_regulator_power(struct sdio_dev *dev, int power_state)
 {
 	int ret = 0;
 	struct device *pdev = dev->dev;
-	struct sdio_platform_cfg *hw_cfg =
-		(struct sdio_platform_cfg *)pdev->platform_data;
+	struct sdio_platform_cfg *hw_cfg = (struct sdio_platform_cfg *)pdev->platform_data;
 
 	/*
 	 * Note that from the board file the appropriate regualtor names are
@@ -1363,9 +1327,9 @@ int sdhci_kona_sdio_regulator_power(struct sdio_dev *dev, int power_state)
 			
 			if((hw_cfg->devtype==SDIO_DEV_TYPE_SDMMC)&&(hw_cfg->configure_sdio_pullup)){
 			    dev_err(dev->dev, "Pull-Up CMD/DAT Line  \r\n");
-				mdelay(1);
+				mdelay(2); // 1ms -> 2ms
 				hw_cfg->configure_sdio_pullup(1);//set SD CMD and DAT as pull-up.
-				mdelay(1);	//Add delay for pins to pull-up.
+				mdelay(2);	//Add delay for pins to pull-up, 1ms -> 2ms
 			}
 		
 		} else{
@@ -1469,7 +1433,7 @@ static int sdhci_kona_enabled_to_disabled(struct sdio_dev *dev)
 		return 0;
 #endif
 
-	return sdmmc_off_timeout;
+	return KONA_SDMMC_OFF_TIMEOUT;
 
 }
 
@@ -1492,6 +1456,36 @@ static int sdhci_kona_disabled_to_off(struct sdio_dev *dev)
 	dev->dpm_state = OFF;
 	pr_info("Disabled --> OFF\r\n");
 	return 0;
+}
+
+/*
+ * When the suspend of the platform driver is called, we don't know the
+ * current DPM state. So we can call this function to switch OFF the
+ * regulator. Need to revisit this function once we do clock management
+ * through this framework.
+ */
+static int sdhci_kona_anystate_to_off(struct sdio_dev *dev)
+{
+	switch (dev->dpm_state) {
+	case OFF:
+		dev_dbg(dev->dev, "Already regulators are OFF \r\n");
+		return 0;
+	case DISABLED:
+		/* Turn OFF the regulator */
+		dev_dbg(dev->dev, "Disabled->OFF \r\n");
+		dev->dpm_state = OFF;
+		return sdhci_kona_sdio_regulator_power(dev, 0);
+	case ENABLED:
+		/* TODO: Turn OFF the clocks */
+		/* Turn OFF the regulator */
+		dev_dbg(dev->dev, "ENABLED ->Disabled->OFF \r\n");
+		dev->dpm_state = OFF;
+		return sdhci_kona_sdio_regulator_power(dev, 0);
+	default:
+		dev_dbg(dev->dev, "Invalid state %d \r\n",
+			dev->dpm_state);
+		return -EINVAL;
+	}
 }
 
 static int sdhci_pltfm_set(struct sdhci_host *host, int enable, int lazy)

@@ -243,7 +243,7 @@ int 	d2083_unmask_irq(struct d2083 *d2083, int irq);
 int 	d2083_irq_init(struct d2083 *d2083, int irq, struct d2083_platform_data *pdata);
 int 	d2083_irq_exit(struct d2083 *d2083);
 
-#if defined(CONFIG_MACH_RHEA_SS_IVORY) || defined(CONFIG_MACH_RHEA_SS_NEVIS) || defined(CONFIG_MACH_RHEA_SS_NEVISP) || defined(CONFIG_MACH_RHEA_SS_CORSICA) || defined(CONFIG_MACH_RHEA_SS_NEVISDS)
+#if defined(CONFIG_MACH_RHEA_SS_IVORY) || defined(CONFIG_MACH_RHEA_SS_NEVIS) || defined(CONFIG_MACH_RHEA_SS_NEVISP) || defined(CONFIG_MACH_RHEA_SS_CORIPLUS) || defined(CONFIG_MACH_RHEA_SS_NEVISDS)
 /* DLG IOCTL interface */
 extern int d2083_ioctl_regulator(struct d2083 *d2083, unsigned int cmd, unsigned long arg);
 #endif /* CONFIG_MACH_RHEA_SS_IVORY */

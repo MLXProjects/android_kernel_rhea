@@ -567,7 +567,7 @@ struct device *ipcs_get_drvdata(void)
 static int ipcs_read_proc(char *page, char **start, off_t off, int count,
 			  int *eof, void *data)
 {
-	int len = IPC_DumpStatus(page, count);
+	int len = IPC_DumpStatus(page);
 	if (len <= off + count)
 		*eof = 1;
 	*start = page + off;

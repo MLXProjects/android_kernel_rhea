@@ -772,29 +772,12 @@ void IPC_Configured(void)
 *===========================================================*/
 
 /**************************************************/
-void IPC_ApSleepModeSet(IPC_Boolean inSleep)
+void IPC_ApSleepModeSet(IPC_Boolean Setting)
 {
-	static IPC_U32	sleepCount = 0; 
-	static IPC_U32	resumeCount = 0; 
-
-	if (!inSleep)
-	{
-		IPC_AlignTime();
-		SmLocalControl.SmControl->ApSleepTime[resumeCount % 4].ResumeTime 
-			= TIMER_GetValue();
-		resumeCount ++;
-	}
-	else
-	{
-		SmLocalControl.SmControl->ApSleepTime[sleepCount % 4].SleepTime 
-			= TIMER_GetValue();
-		sleepCount ++;
-	}
-	IPC_TRACE(IPC_Channel_General, "IPC_ApSleepModeSet",
-		"state %d time %u", 
-		inSleep, TIMER_GetValue(), 0, 0);
+	IPC_TRACE(IPC_Channel_Error, "IPC_ApSleepModeSet",
+		  "DONOT USE THIS FUNCTION, USE DEEPSLEEP API INSTEAD", 0, 0, 0,
+		  0);
 }
-
 
 /**************************************************/
 IPC_Boolean IPC_ApSleepModeGet(void)

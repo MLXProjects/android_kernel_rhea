@@ -566,7 +566,7 @@ static struct regulator_init_data bcm59039_asr_nm_data = {
             .valid_ops_mask =
             REGULATOR_CHANGE_STATUS | REGULATOR_CHANGE_MODE |
 			REGULATOR_CHANGE_VOLTAGE,
-		#if defined(CONFIG_MACH_RHEA_SS_ZANIN_05) || defined(CONFIG_MACH_RHEA_SS_CORIPLUS)
+		#if defined(CONFIG_MACH_RHEA_SS_ZANIN_05) || defined(CONFIG_MACH_RHEA_SS_CORSICA)
             .always_on = 0,
 		#else
 			.always_on = 1,

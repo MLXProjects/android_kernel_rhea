@@ -1385,10 +1385,9 @@ static int update_eoc(struct bcmpmu_em *pem)
 			pem->eoc_count = 0;
 		}
 
-		pr_info("%s, eoc_count=%d batt_volt=%d batt_curr=%d\n",
+		/*pr_info("%s, eoc_count=%d batt_volt=%d batt_curr=%d\n",
 			__func__,
-			pem->eoc_count, pem->batt_volt, pem->batt_curr);
-
+			pem->eoc_count, pem->batt_volt, pem->batt_curr);*/
 
 	} else if (pem->support_hw_eoc) {
 			if ((pem->eoc_state == 1) &&
@@ -1485,8 +1484,8 @@ static int pre_cutoff_check(struct bcmpmu_em *pem)
 	}
 	pem->cutoff_cal_index = index;
 
-	pr_em(FLOW, "%s, capacity=%d, cnt=%d, index=%d\n", __func__,
-		capacity, pem->cutoff_chk_cnt, index);
+	//pr_em(FLOW, "%s, capacity=%d, cnt=%d, index=%d\n", __func__,
+	//	capacity, pem->cutoff_chk_cnt, index);
 
 	return capacity;
 }
@@ -1638,12 +1637,12 @@ static int update_batt_capacity(struct bcmpmu_em *pem, int *cap)
 
 		capacity64 = pem->fg_capacity * 100 + pem->fg_capacity_full / 2;
 		capacity = div64_s64(capacity64, pem->fg_capacity_full);
-
+/*
 		if ((time - pem->time) * 1000 > get_update_rate(pem)) {
 			pr_em(FLOW, "%s, batt_capacity=%d, capacity=%d\n",
 				__func__, pem->batt_capacity, capacity);
 		}
-
+*/
 		if ((is_charger_present(pem)) &&
 			(pem->batt_capacity != 100) &&
 			(capacity >= 100))

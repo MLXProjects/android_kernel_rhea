@@ -284,7 +284,7 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 
 	card->ext_csd.rev = ext_csd[EXT_CSD_REV];
 #ifdef CONFIG_MMC_BCM_SD
-	if (card->ext_csd.rev > 7) {
+	if (card->ext_csd.rev > 5) {
 #else
 	if (card->ext_csd.rev > 3) {
 #endif
@@ -894,7 +894,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 			 *
 			 * WARNING: eMMC rules are NOT the same as SD DDR
 			 */
-			if (ddr == MMC_1_2V_DDR_MODE) {
+			if (ddr == EXT_CSD_CARD_TYPE_DDR_1_2V) {
 				err = mmc_set_signal_voltage(host,
 					MMC_SIGNAL_VOLTAGE_120, 0);
 				if (err)

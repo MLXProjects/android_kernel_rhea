@@ -266,6 +266,7 @@ static void hci_uart_destruct(struct hci_dev *hdev)
 		return;
 
 	BT_DBG("%s", hdev->name);
+	kfree(hdev->driver_data);
 }
 
 /* ------ LDISC part ------ */

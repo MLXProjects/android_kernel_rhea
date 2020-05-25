@@ -1238,7 +1238,7 @@ static void spa_update_batt_info(struct spa_power_desc *spa_power_iter, unsigned
 			break;
 		case POWER_SUPPLY_PROP_VOLTAGE_NOW:
 			value.intval= spa_power_iter->batt_info.voltage;
-			pr_spa_dbg(LEVEL1, "%s : voltage = %d\n", __func__, spa_power_iter->batt_info.voltage);
+			//pr_spa_dbg(LEVEL1, "%s : voltage = %d\n", __func__, spa_power_iter->batt_info.voltage);
 			ps->set_property(ps, POWER_SUPPLY_PROP_VOLTAGE_NOW, &value);
 			break;
 		case POWER_SUPPLY_PROP_CAPACITY:
@@ -1264,7 +1264,7 @@ static void spa_update_batt_info(struct spa_power_desc *spa_power_iter, unsigned
 			{ // batterry removed
 				value.intval = 0;
 			}			
-			pr_spa_dbg(LEVEL1, "%s : capacity = %d\n notified capacity=%d\n", __func__, spa_power_iter->batt_info.capacity, value.intval);
+			//pr_spa_dbg(LEVEL1, "%s : capacity = %d\n notified capacity=%d\n", __func__, spa_power_iter->batt_info.capacity, value.intval);
 			ps->set_property(ps, POWER_SUPPLY_PROP_CAPACITY, &value);
 			break;
 		case POWER_SUPPLY_PROP_TEMP:
@@ -1317,7 +1317,7 @@ static void spa_update_power_supply_charger(struct spa_power_desc *spa_power_ite
 		ps = power_supply_get_by_name(POWER_SUPPLY_WALL);
 		value.intval = 1;
 		ps->set_property(ps, POWER_SUPPLY_PROP_ONLINE, &value);
-		pr_spa_dbg(LEVEL1, "%s : Charger Online : WALL TYPE\n", __func__);
+		//pr_spa_dbg(LEVEL1, "%s : Charger Online : WALL TYPE\n", __func__);
 	}
 	else if(spa_power_iter->charger_info.charger_type == POWER_SUPPLY_TYPE_USB ||
 			spa_power_iter->charger_info.charger_type == POWER_SUPPLY_TYPE_USB_CDP)
@@ -1325,7 +1325,7 @@ static void spa_update_power_supply_charger(struct spa_power_desc *spa_power_ite
 		ps = power_supply_get_by_name(POWER_SUPPLY_USB);
 		value.intval = 1;
 		ps->set_property(ps, POWER_SUPPLY_PROP_ONLINE, &value);
-		pr_spa_dbg(LEVEL1, "%s : Charger Online : USB TYPE\n", __func__);
+		//pr_spa_dbg(LEVEL1, "%s : Charger Online : USB TYPE\n", __func__);
 	}
 	else
 	{
@@ -1338,7 +1338,7 @@ static void spa_update_power_supply_charger(struct spa_power_desc *spa_power_ite
 		value.intval = 0;
 		ps->set_property(ps, POWER_SUPPLY_PROP_ONLINE, &value);
 
-		pr_spa_dbg(LEVEL1, "%s : Charger Offline\n", __func__);
+		//pr_spa_dbg(LEVEL1, "%s : Charger Offline\n", __func__);
 	}
 
 
