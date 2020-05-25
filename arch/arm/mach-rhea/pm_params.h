@@ -150,7 +150,7 @@
 
 /* PLL Offset config values for RF interference reduction
 *  as suggested by modem team */
-#define PLLARM_OFFEST_CONFIG    0x35589D9
+#define PLLARM_OFFEST_CONFIG    0x10000000
 #define PLLDSI_OFFEST_CONFIG    0x0
 #define PLL1_OFFSET_CONFIG	0xBFFFF
 
