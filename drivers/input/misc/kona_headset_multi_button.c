@@ -107,7 +107,7 @@
 */
 #define HEADPHONE_DETECT_LEVEL_MIN		0
 #if defined (CONFIG_MACH_RHEA_SS_CORSICA) || defined (CONFIG_MACH_RHEA_SS_CORSICASS) || defined (CONFIG_MACH_RHEA_SS_IVORY)
-#define HEADPHONE_DETECT_LEVEL_MAX      700 
+#define HEADPHONE_DETECT_LEVEL_MAX      700
 #elif  defined(CONFIG_MACH_RHEA_SS_ZANIN)
 #define HEADPHONE_DETECT_LEVEL_MAX      690
 #elif defined(CONFIG_MACH_RHEA_SS_NEVISDS)
@@ -120,7 +120,7 @@
 #define CALL_OPENCABLE_DETECT_LEVEL_MIN	2000
 #define CALL_OPENCABLE_DETECT_LEVEL_MAX	5000
 #if defined (CONFIG_MACH_RHEA_SS_CORSICA) || defined (CONFIG_MACH_RHEA_SS_CORSICASS) || defined (CONFIG_MACH_RHEA_SS_IVORY)
-#define BASIC_HEADSET_DETECT_LEVEL_MIN  701
+#define BASIC_HEADSET_DETECT_LEVEL_MIN  0
 #elif defined(CONFIG_MACH_RHEA_SS_ZANIN)
 #define BASIC_HEADSET_DETECT_LEVEL_MIN  691
 #elif defined(CONFIG_MACH_RHEA_SS_NEVISDS)
@@ -749,7 +749,7 @@ static int read_adc_for_accessory_detection(int hst)
 	* from the value read, otherwise mic_level is zero
 	*/
 
-#if !(defined(CONFIG_MACH_RHEA_SS_NEVISP) || defined(CONFIG_MACH_RHEA_SS_NEVIS) || defined(CONFIG_MACH_RHEA_SS_NEVISDS)|| defined(CONFIG_MACH_RHEA_SS_CORSICA) ||defined(CONFIG_MACH_RHEA_SS_CORSICA_REV02))
+#if !(defined(CONFIG_MACH_RHEA_SS_NEVISP) || defined(CONFIG_MACH_RHEA_SS_NEVIS) || defined(CONFIG_MACH_RHEA_SS_NEVISDS)|| defined(CONFIG_MACH_RHEA_SS_CORIPLUS) ||defined(CONFIG_MACH_RHEA_SS_CORSICA_REV02))
 		do{
 			config_adc_for_accessory_detection(hst);
 			mic_level = chal_aci_block_read(mic_dev->aci_chal_hdl,

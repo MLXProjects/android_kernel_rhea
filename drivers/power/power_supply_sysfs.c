@@ -72,11 +72,12 @@ static ssize_t power_supply_show_property(struct device *dev,
 	else
 		ret = psy->get_property(psy, off, &value);
 
-	if (ret < 0) {
+	if (ret < 0) {/*
 		if (ret == -ENODATA)
 			dev_dbg(dev, "driver has no data for `%s' property\n",
 				attr->attr.name);
-		else if (ret != -ENODEV)
+		else */
+		if (ret != -ENODEV)
 			dev_err(dev, "driver failed to report `%s' property\n",
 				attr->attr.name);
 		return ret;
@@ -250,14 +251,14 @@ int power_supply_uevent(struct device *dev, struct kobj_uevent_env *env)
 	char *prop_buf;
 	char *attrname;
 
-	dev_dbg(dev, "uevent\n");
+//	dev_dbg(dev, "uevent\n");
 
 	if (!psy || !psy->dev) {
 		dev_dbg(dev, "No power supply yet\n");
 		return ret;
 	}
 
-	dev_dbg(dev, "POWER_SUPPLY_NAME=%s\n", psy->name);
+//	dev_dbg(dev, "POWER_SUPPLY_NAME=%s\n", psy->name);
 
 	ret = add_uevent_var(env, "POWER_SUPPLY_NAME=%s", psy->name);
 	if (ret)
@@ -294,7 +295,7 @@ int power_supply_uevent(struct device *dev, struct kobj_uevent_env *env)
 			goto out;
 		}
 
-		dev_dbg(dev, "prop %s=%s\n", attrname, prop_buf);
+		//dev_dbg(dev, "prop %s=%s\n", attrname, prop_buf);
 
 		ret = add_uevent_var(env, "POWER_SUPPLY_%s=%s", attrname, prop_buf);
 		kfree(attrname);

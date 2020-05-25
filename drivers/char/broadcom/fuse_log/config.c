@@ -290,6 +290,10 @@ static ssize_t proc_write(struct file *file, const char __user * buffer,
 			WriteToLogDev_MODEMLOG();
 			break;
 		default:
+			rc = kstrtoint(strstrip(kbuf), 10, &val);
+			if ((rc == 0) && (val >= MIN_MTT_SD_SIZE)
+			    && (val <= MAX_MTT_SD_SIZE))
+				g_config.file_max = val;
 			break;
 		}
 	}

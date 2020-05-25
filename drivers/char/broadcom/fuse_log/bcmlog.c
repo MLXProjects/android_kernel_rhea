@@ -649,11 +649,11 @@ void BCMLOG_LogString(const char *inLogString, unsigned short inSender)
 	int StringLength, j = 0, k = 0;
 
 	/* Redirect the printk string if reqested by client */
-	if(inSender == BCMLOG_LOG_ULOGGING_ID &&
+	if(inSender == BCMLOG_LOG_ULOGGING_ID && 
 			atomic_read(&redirectEnabled) == 1)
 	{
 		unsigned long irql;
-
+		
 		irql = AcquireOutputLock();
 		if(sPrintkCbk)
 			sPrintkCbk(inLogString);
@@ -2036,9 +2036,9 @@ static void BCMLOG_OutputLinkList(unsigned long ListSize,
  *
  * Function Name:       BCMLOG_RegisterPrintkRedirectCbk
  *
- * Description:         Register callback to redirect printk data to
- *       		temp buffer using registered callback
- * Notes:  		BrcmRedirectPrintkCbk should ONLY copy the data to
+ * Description:         Register callback to redirect printk data to 
+ *       		temp buffer using registered callback 
+ * Notes:  		BrcmRedirectPrintkCbk should ONLY copy the data to 
  * 			temp buffer and return.
  **/
 void BCMLOG_RegisterPrintkRedirectCbk(int enable, BrcmRedirectPrintkCbk cb)

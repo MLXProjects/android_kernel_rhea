@@ -268,7 +268,7 @@ int bcm_sdiowl_init(int onoff)
 
 	SdioPinCfgs.name = PN_MMC1RST;
 	pinmux_get_pin_config(&SdioPinCfgs);
-	SdioPinCfgs.reg.b.pull_dn=1;
+	SdioPinCfgs.reg.b.pull_dn=0;
 	SdioPinCfgs.reg.b.pull_up=0;
 	SdioPinCfgs.reg.b.drv_sth=3;
 	pinmux_set_pin_config(&SdioPinCfgs); 
@@ -435,7 +435,7 @@ void bcm_sdiowl_term(void)
 	SdioPinCfgs.reg.b.drv_sth=3;
 	pinmux_set_pin_config(&SdioPinCfgs);
 
-#if defined(CONFIG_MACH_RHEA_SS_ZANIN) || defined(CONFIG_MACH_RHEA_SS_CORIPLUS)
+#if defined(CONFIG_MACH_RHEA_SS_ZANIN) || defined(CONFIG_MACH_RHEA_SS_CORIPLUS) || defined(CONFIG_MACH_RHEA_SS_CORSICA)
 	SdioPinCfgs.name = PN_GPIO07;
 	pinmux_get_pin_config(&SdioPinCfgs);
 	SdioPinCfgs.reg.b.pull_dn=0;
@@ -453,7 +453,7 @@ void bcm_sdiowl_term(void)
 
 	SdioPinCfgs.name = PN_MMC1RST;
 	pinmux_get_pin_config(&SdioPinCfgs);
-	SdioPinCfgs.reg.b.pull_dn=1;
+	SdioPinCfgs.reg.b.pull_dn=0;
 	SdioPinCfgs.reg.b.pull_up=0;
 	SdioPinCfgs.reg.b.drv_sth=0;
 	pinmux_set_pin_config(&SdioPinCfgs); 

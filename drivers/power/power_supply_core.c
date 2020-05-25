@@ -45,7 +45,7 @@ static void power_supply_changed_work(struct work_struct *work)
 	struct power_supply *psy = container_of(work, struct power_supply,
 						changed_work);
 
-	dev_dbg(psy->dev, "%s\n", __func__);
+//	dev_dbg(psy->dev, "%s\n", __func__);
 
 	spin_lock_irqsave(&psy->changed_lock, flags);
 	if (psy->changed) {
@@ -69,7 +69,7 @@ void power_supply_changed(struct power_supply *psy)
 {
 	unsigned long flags;
 
-	dev_dbg(psy->dev, "%s\n", __func__);
+//	dev_dbg(psy->dev, "%s\n", __func__);
 
 	spin_lock_irqsave(&psy->changed_lock, flags);
 	psy->changed = true;
@@ -105,7 +105,7 @@ int power_supply_am_i_supplied(struct power_supply *psy)
 	error = class_for_each_device(power_supply_class, NULL, psy,
 				      __power_supply_am_i_supplied);
 
-	dev_dbg(psy->dev, "%s %d\n", __func__, error);
+	//dev_dbg(psy->dev, "%s %d\n", __func__, error);
 
 	return error;
 }

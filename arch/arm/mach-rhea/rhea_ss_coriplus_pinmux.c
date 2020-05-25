@@ -131,7 +131,6 @@ static struct __init pin_config board_pin_config[] = {
 	PIN_BSC_CFG(GPIO16, BSC2CLK, 0x120), 						// GPS_SCL
 	PIN_BSC_CFG(GPIO17, BSC2DAT, 0x120), 						// GPS_SDA
 	PIN_CFG(GPS_PABLANK, GPIO97, 0, ON, OFF, 0, 0, 8MA), 		// GPS_CAL_REQ
-
 	/* WLAN */
 	PIN_CFG(MMC1DAT0, MMC1DAT0, 0, OFF, ON, 0, 0, 8MA),		// WLAN_SDIO_DAT0
 	PIN_CFG(MMC1DAT1, MMC1DAT1, 0, OFF, ON, 0, 0, 8MA),		// WLAN_SDIO_DAT1

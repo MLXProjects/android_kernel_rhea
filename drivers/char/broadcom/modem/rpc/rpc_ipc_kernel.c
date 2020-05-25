@@ -2352,10 +2352,7 @@ int RpcDbgListClientMsgs(RpcOutputContext_t *c)
 
 		RpcDumpTaskState(c, cInfo->tid, cInfo->pid);
 
-		if (c->protected)
-			spin_lock(&cInfo->mLock);
-		else
-			spin_lock_bh(&cInfo->mLock);
+		spin_lock_bh(&cInfo->mLock);
 
 		list_for_each_safe(listptr, pos, &cInfo->pktQ.mList)
 		{
@@ -2375,10 +2372,7 @@ int RpcDbgListClientMsgs(RpcOutputContext_t *c)
 						(int)cbkItem->dataBufHandle);
 		}
 
-		if (c->protected)
-			spin_unlock(&cInfo->mLock);
-		else
-			spin_unlock_bh(&cInfo->mLock);
+		spin_unlock_bh(&cInfo->mLock);
 
 	}
 	return 0;
@@ -2398,7 +2392,7 @@ typedef struct {
 
 static void *log_seq_start(struct seq_file *s, loff_t *pos)
 {
-	static RpcLogContext_t context = {0, 0, 0, { 1, FALSE, NULL, {0} } };
+	static RpcLogContext_t context = {0, 0, 0, { 1, NULL, {0} } };
 
 	context.out.type = 1;
 	context.out.seq = s;
@@ -2512,8 +2506,10 @@ void log_proc_cleanup(void)
 
 int RpcDbgDumpHistoryLogging(int type, int level)
 {
-	RpcOutputContext_t outContext = {0, TRUE, NULL, {0} };
+	RpcOutputContext_t outContext;
 	int offset = 0;
+
+	memset(&outContext, 0, sizeof(RpcOutputContext_t));
 
 	outContext.type = type;
 

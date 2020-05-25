@@ -141,7 +141,7 @@ Boolean rpc_reset_client_msgs(UInt8 clientId)
 }
 
 Boolean rpc_register_client_msgs(UInt8 clientId, UInt16 *tbl,
-					UInt32 table_size)
+					UInt16 table_size)
 {
 	UInt32 mask = 1;
 

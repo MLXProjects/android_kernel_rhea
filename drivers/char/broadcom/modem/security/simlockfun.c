@@ -2434,12 +2434,17 @@ UInt16 SIMLockGetLockCodeInform(SEC_SimLock_LockType_t lockType,
 				    simlockFile->
 				    resetUnlockCounter ? &Network_Unlock_Attempt
 				    : &simlock_nvdata.corporate_unlock_attempt;
+				if (NULL != unlock_attempt) {
 					remain_attempt =
 					    (*unlock_attempt <
 					     simlockFile->
 					     maxUnlockAttempt ? simlockFile->
 					     maxUnlockAttempt -
 					     (*unlock_attempt) : 0);
+				} else {
+					remain_attempt =
+					    simlockFile->maxUnlockAttempt;
+				}
 
 				lockinfo[1] = remain_attempt;
 

@@ -1441,7 +1441,8 @@ static void sdhci_do_set_ios(struct sdhci_host *host, struct mmc_ios *ios)
 		if ((ios->timing == MMC_TIMING_UHS_SDR50) ||
 		    (ios->timing == MMC_TIMING_UHS_SDR104) ||
 		    (ios->timing == MMC_TIMING_UHS_DDR50) ||
-		    (ios->timing == MMC_TIMING_UHS_SDR25))
+		    (ios->timing == MMC_TIMING_UHS_SDR25) ||
+		    (ios->timing == MMC_TIMING_UHS_SDR12))
 			ctrl |= SDHCI_CTRL_HISPD;
 
 		ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
@@ -2644,7 +2645,21 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
 				host->data_early = 1;
 			} else {
 #ifdef CONFIG_SDHCI_THROUGHPUT
-				sdhci_debugfs_thrpt_calculate(host);
+				if (unlikely(host->thrpt_dbgfs_enable)) {
+					u8* rw_str[2] = {"R:", "W:"};
+					u32 throughput;
+					do_gettimeofday(&((mmc_throughput[host->mmc->index]).t2));
+					throughput = ((mmc_throughput[host->mmc->index]).blk_size * (mmc_throughput[host->mmc->index]).nm_of_blks * 1000000) /\
+						     ((((mmc_throughput[host->mmc->index]).t2.tv_sec - (mmc_throughput[host->mmc->index]).t1.tv_sec) * 1000000) + \
+						      ((int)((mmc_throughput[host->mmc->index]).t2.tv_usec) - (int)((mmc_throughput[host->mmc->index]).t1.tv_usec)));
+					pr_info("%s(%s) %ld,%ld,%ld,%ld,%d,%d,%d\n", \
+						rw_str[!((mmc_throughput[host->mmc->index]).read & MMC_DATA_READ)], mmc_hostname(host->mmc),\
+						(mmc_throughput[host->mmc->index]).t2.tv_sec,(mmc_throughput[host->mmc->index]).t2.tv_usec, \
+						(mmc_throughput[host->mmc->index]).t1.tv_sec,(mmc_throughput[host->mmc->index]).t1.tv_usec, \
+						(mmc_throughput[host->mmc->index]).blk_size, (mmc_throughput[host->mmc->index]).nm_of_blks, throughput);
+
+				}
+//sdhci_debugfs_thrpt_calculate(host);
 #endif
 				sdhci_finish_data(host);
 			}
@@ -2844,7 +2859,8 @@ int sdhci_resume_host(struct sdhci_host *host)
 	 * only for non SDIO case, so resume too should happen only for non
 	 * SDIO case.
 	 */
-	ret = mmc_resume_host(host->mmc);
+	if (mmc->card && (mmc->card->type != MMC_TYPE_SDIO))
+		ret = mmc_resume_host(host->mmc);
 
 	sdhci_enable_card_detection(host);
 
@@ -3566,7 +3582,19 @@ int sdhci_add_host(struct sdhci_host *host)
 	sdhci_enable_card_detection(host);
 
 #ifdef CONFIG_SDHCI_THROUGHPUT
-	sdhci_debugfs_throughput_init(host, mmc);
+	mmc_throughput = krealloc(mmc_throughput, ((host->mmc->index + 1) \
+				* sizeof(sdhci_throughput_t)), GFP_KERNEL);
+	 if (likely(mmc_throughput)) {
+		memset(&mmc_throughput[host->mmc->index], 0, sizeof(sdhci_throughput_t));
+		host->thrpt_dbgfs_enable = 0;
+		mmc_throughput[host->mmc->index].dentry = \
+			debugfs_create_u8(mmc_hostname(mmc), 0664, \
+					sdhci_throughput_dentry, &(host->thrpt_dbgfs_enable));
+		if (unlikely(mmc_throughput[host->mmc->index].dentry == NULL))
+			printk(KERN_ERR "could not create debugfs entry for %s\n", mmc_hostname(mmc));
+	}
+	else
+		printk(KERN_ERR "Error allocating memory for sdhci throughput debugfs inerface\n");
 #endif
 	return 0;
 
@@ -3607,7 +3635,7 @@ void sdhci_remove_host(struct sdhci_host *host, int dead)
 	sdhci_disable_card_detection(host);
 
 #ifdef CONFIG_SDHCI_THROUGHPUT
-	sdhci_debugfs_throughput_remove(host);
+	debugfs_remove(mmc_throughput[host->mmc->index].dentry);
 #endif
 
 	mmc_remove_host(host->mmc);

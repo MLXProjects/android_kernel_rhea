@@ -36,7 +36,7 @@
 #include <linux/proc_fs.h>
 #include <linux/kthread.h>
 
-#if defined(CONFIG_MACH_RHEA_SS_IVORY) || defined(CONFIG_MACH_RHEA_SS_NEVIS) || defined(CONFIG_MACH_RHEA_SS_NEVIS_REV00) || defined(CONFIG_MACH_RHEA_SS_NEVISP) || defined(CONFIG_MACH_RHEA_SS_CORSICA)|| defined(CONFIG_MACH_RHEA_SS_NEVISDS)
+#if defined(CONFIG_MACH_RHEA_SS_IVORY) || defined(CONFIG_MACH_RHEA_SS_NEVIS) || defined(CONFIG_MACH_RHEA_SS_NEVIS_REV00) || defined(CONFIG_MACH_RHEA_SS_NEVISP) || defined(CONFIG_MACH_RHEA_SS_CORIPLUS)|| defined(CONFIG_MACH_RHEA_SS_NEVISDS)
 #include <linux/broadcom/pmu_chip.h>
 #include <asm/uaccess.h>
 #endif /* CONFIG_MACH_RHEA_SS_IVORY */
@@ -459,7 +459,7 @@ static void d2083_system_event_init(struct d2083 *d2083)
 /*****************************************/
 /* 	Debug using proc entry           */
 /*****************************************/
-#if defined(CONFIG_MACH_RHEA_SS_IVORY) || defined(CONFIG_MACH_RHEA_SS_NEVIS) || defined(CONFIG_MACH_RHEA_SS_NEVIS_REV00) || defined(CONFIG_MACH_RHEA_SS_NEVISP) || defined(CONFIG_MACH_RHEA_SS_CORSICA)|| defined(CONFIG_MACH_RHEA_SS_NEVISDS)
+#if defined(CONFIG_MACH_RHEA_SS_IVORY) || defined(CONFIG_MACH_RHEA_SS_NEVIS) || defined(CONFIG_MACH_RHEA_SS_NEVIS_REV00) || defined(CONFIG_MACH_RHEA_SS_NEVISP) || defined(CONFIG_MACH_RHEA_SS_CORIPLUS)|| defined(CONFIG_MACH_RHEA_SS_NEVISDS)
 static int d2083_ioctl_open(struct inode *inode, struct file *file)
 {
 	dlg_info("%s\n", __func__);
@@ -893,7 +893,7 @@ int d2083_device_init(struct d2083 *d2083, int irq,
 	d2083_client_dev_register(d2083, "d2083-audio", &(d2083->audio.pdev));
 
 	d2083_system_event_init(d2083);
-#if defined(CONFIG_MACH_RHEA_SS_IVORY) || defined(CONFIG_MACH_RHEA_SS_NEVIS) || defined(CONFIG_MACH_RHEA_SS_NEVIS_REV00) || defined(CONFIG_MACH_RHEA_SS_NEVISP) || defined(CONFIG_MACH_RHEA_SS_CORSICA)|| defined(CONFIG_MACH_RHEA_SS_NEVISDS)
+#if defined(CONFIG_MACH_RHEA_SS_IVORY) || defined(CONFIG_MACH_RHEA_SS_NEVIS) || defined(CONFIG_MACH_RHEA_SS_NEVIS_REV00) || defined(CONFIG_MACH_RHEA_SS_NEVISP) || defined(CONFIG_MACH_RHEA_SS_CORIPLUS)|| defined(CONFIG_MACH_RHEA_SS_NEVISDS)
 	d2083_debug_proc_init(d2083);
 #endif /* CONFIG_MACH_RHEA_SS_IVORY */
 
@@ -926,7 +926,7 @@ EXPORT_SYMBOL_GPL(d2083_device_init);
 
 void d2083_device_exit(struct d2083 *d2083)
 {
-#if defined(CONFIG_MACH_RHEA_SS_IVORY) || defined(CONFIG_MACH_RHEA_SS_NEVIS) || defined(CONFIG_MACH_RHEA_SS_NEVIS_REV00) || defined(CONFIG_MACH_RHEA_SS_NEVISP) || defined(CONFIG_MACH_RHEA_SS_CORSICA)|| defined(CONFIG_MACH_RHEA_SS_NEVISDS)
+#if defined(CONFIG_MACH_RHEA_SS_IVORY) || defined(CONFIG_MACH_RHEA_SS_NEVIS) || defined(CONFIG_MACH_RHEA_SS_NEVIS_REV00) || defined(CONFIG_MACH_RHEA_SS_NEVISP) || defined(CONFIG_MACH_RHEA_SS_CORIPLUS)|| defined(CONFIG_MACH_RHEA_SS_NEVISDS)
 	d2083_debug_proc_exit();
 #endif /* CONFIG_MACH_RHEA_SS_IVORY */
 	d2083_dev_info = NULL;

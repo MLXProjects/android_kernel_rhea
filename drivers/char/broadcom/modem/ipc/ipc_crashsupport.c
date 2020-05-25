@@ -815,6 +815,7 @@ int IpcCPCrashCheck(void)
 	return 0;
 }
 
+#ifndef CONFIG_BCM_AP_PANIC_ON_CPCRASH
 /******************************************************************
 *   Utility function to retrieve full crash log from CP via simple
 *   handshake protocol.
@@ -1092,5 +1093,4 @@ void DUMP_CPMemoryByList(struct T_RAMDUMP_BLOCK *mem_dump)
 	iounmap(RamDumpBlockVAddr);
 
 }
-#endif
-
+#endif /* CONFIG_BCM_AP_PANIC_ON_CPCRASH */
