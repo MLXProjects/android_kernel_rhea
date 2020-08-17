@@ -258,7 +258,7 @@ bottomup:
 
 	return addr;
 }
-
+/*
 void arch_pick_mmap_layout(struct mm_struct *mm)
 {
 	unsigned long random_factor = 0UL;

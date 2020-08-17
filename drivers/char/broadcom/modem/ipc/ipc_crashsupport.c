@@ -957,8 +957,6 @@ void DUMP_CP_assert_log(void)
 			&& cp_crashed == 1)
 			abort();
 }
-
-#ifndef CONFIG_BCM_AP_PANIC_ON_CPCRASH
 /****************************************************************
 **
 *   Utility function to retrieve full CP RAM dump log for crash log
