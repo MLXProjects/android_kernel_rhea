@@ -1,9 +1,11 @@
 # android_kernel_rhea -> cm-11.0
-This is the CM11 kernel 3.0.101 for the Samsung Galaxy Pocket Plus (a.k.a. coriplus) GT-S5301 device.  
+This is the CM11 kernel (version 3.0.101) for the Samsung Galaxy Pocket Plus (a.k.a. coriplus) GT-S5301 device.  
 # History
 This kernel was originally released for the Pocket Neo (corsica, S5310) but was adapted by me in order to make touch and other things work on coriplus.  
 # Current status
 Touchscreen works, bluetooth is (sort-of) working and there's an effort to make the Wi-Fi work here (half-works). RIL seems to work.  
+Power management seems to be mostly working as the power on/off/suspend works, but at suspend the phone may sometimes shutdown.  
+I suspect this is a touch driver issue, as before modding it the suspend worked nicely. Also, as the kernel had DT2W (double tap to wake) support at the other touch driver, that may conflict with current touch (which hasn't dt2w support).  
 Bluetooth driver stops responding after startup and restarts itself after searching for devices and/or trying to pair.  
 Wi-Fi driver can initialize, but fails at some point and just doesn't work from Android. Needs to be tested on a simpler environment (eg. booting the kernel and starting adbd & a shell instead of Android framework). 
 # coriplus hardware
