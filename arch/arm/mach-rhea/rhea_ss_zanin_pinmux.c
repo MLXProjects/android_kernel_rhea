@@ -33,8 +33,7 @@ static struct __init pin_config board_pin_config[] = {
 //@HW LCD part configuration
 	PIN_CFG(GPIO18, UB2TX, 0, OFF, OFF, 0, 0, 8MA),   			// Console TX
 	PIN_CFG(SSPDI,	RXD, 0, OFF, ON, 0, 0, 8MA),   			// Console RX
-	PIN_CFG(ICUSBDM, GPIO122, 0, OFF, OFF, 0, 0, 8MA),   		// UART_SEL
-
+        PIN_CFG(ICUSBDP, GPIO121, 0, ON, OFF, 0, 0, 8MA),               // UART_SEL
 
 	/* PMU BSC */
 	PIN_BSC_CFG(PMBSCCLK, PMBSCCLK, 0x20),						// PMU_SCL
@@ -43,7 +42,6 @@ static struct __init pin_config board_pin_config[] = {
 //	PIN_CFG(UBRX, UB1_IF_UART_RX, 0, OFF, ON, 0, 0, 8MA),		// UB1_IF_UART_RX
 //	PIN_CFG(UBTX, UB1_IF_UART_TX, 0, OFF, ON, 0, 0, 8MA),		// UB1_IF_UART_TX
 //	PIN_CFG(ADCSYN, GPEN09, 0, OFF, ON, 0, 0, 8MA),			// ADCSYNC_PMU
-	PIN_CFG(ICUSBDM, GPIO122, 0, ON, OFF, 0, 0, 8MA),		// UART_SEL
 
 	/*
 	 * Note:- For eMMC, Enable Slew-rate, Increase pin drive strength to 10mA.
@@ -77,9 +75,10 @@ static struct __init pin_config board_pin_config[] = {
 	PIN_CFG(DMIC0CLK, GPIO123, 0, OFF, ON, 0, 0, 16MA),		//SD_DECTECT
 
 	/*	Pinmux for keypad */
-	PIN_CFG(GPIO04, KEY_R4, 0, ON, OFF, 0, 0, 8MA),
 	PIN_CFG(GPIO05, KEY_R5, 0, ON, OFF, 0, 0, 8MA),
+	PIN_CFG(GPIO06, KEY_R6, 0, ON, OFF, 0, 0, 8MA),
 	PIN_CFG(GPIO12, KEY_C4, 0, OFF, ON, 0, 0, 8MA),
+	PIN_CFG(GPIO13, KEY_C5, 0, OFF, ON, 0, 0, 8MA),
 
 
 	/* LCD */
@@ -94,23 +93,25 @@ static struct __init pin_config board_pin_config[] = {
 //	PIN_CFG(TRACEDT03, PTI_DAT3, 0, OFF, ON, 0, 0, 8MA),	// N.C
 
 	/* BSC1 - CAM */
-	PIN_BSC_CFG(BSC1CLK, BSC1CLK, 0x20),			/* CAM_SCL */
-	PIN_BSC_CFG(BSC1DAT, BSC1DAT, 0x20),			/* CAM_SDA */
+	PIN_BSC_CFG(BSC1CLK, BSC1CLK, 0x20),						// CAM_SCL
+	PIN_BSC_CFG(BSC1DAT, BSC1DAT, 0x20),						// CAM_SDA
+	PIN_CFG(DCLK1, DCLK1, 0, ON, OFF, 0, 0, 8MA), 				// CAM_MCLK
+	PIN_CFG(DSI0TE, GPIO37, 0, ON, OFF, 0, 0, 8MA), 				// CAM_CORE_EN
+	PIN_CFG(DCLKREQ1, GPIO111, 0, ON, OFF, 0, 0, 8MA), 			// 3M_CAM_STNBY
+	PIN_CFG(SPI0RXD, GPIO92, 0, OFF, ON, 0, 0, 8MA), 			/* CAM_RESET*/
 
-	/* Camera */
-	PIN_CFG(DCLK1, DCLK1, 0, ON, OFF, 0, 0, 8MA),		/* CAM_MCLK */
-	//PIN_CFG(LCDTE, GPIO42, 0, ON, OFF, 0, 0, 8MA),	/* CAM_IO_EN */
-	PIN_CFG(DSI0TE, GPIO37, 0, ON, OFF, 0, 0, 8MA),		/* CAM_IO_EN */
-	PIN_CFG(DCLKREQ1, GPIO111, 0, ON, OFF, 0, 0, 8MA),	/* CAM_EN */
-	PIN_CFG(GPIO13, GPIO13, 0, ON, OFF, 0, 0, 8MA),		/* CAM_RST */
 
 	/* Bluetooth related GPIOS */
-	PIN_CFG(GPIO06, GPIO6, 0, ON, OFF, 0, 0, 8MA), /* BT_WAKE */
-	PIN_CFG(GPIO14, GPIO14, 0, OFF, OFF, 0, 0, 8MA), /* BT_HOST_WAKE */
-	PIN_CFG(GPS_HOSTREQ, GPIO100, 0, ON, OFF, 0, 0, 8MA), /* BT_REG_ON */
 
-	/* SSP4 - I2S */
+	PIN_CFG(GPIO06, GPIO6, 0, ON, OFF, 0, 0, 8MA), /* BT_WAKE */			
+	//PIN_CFG(GPS_CALREQ, GPIO99, 0, ON, OFF, 0, 0, 8MA),      		// BT_RESETN		
+	PIN_CFG(GPIO14, GPIO14, 0, OFF, OFF, 0, 0, 8MA), /* BT_HOST_WAKE */ 
+
+	PIN_CFG(GPS_HOSTREQ, GPIO100, 0, ON, OFF, 0, 0, 8MA), // BT_REG_ON	
+//	PIN_CFG(GPIO10, GPIO10, 0, OFF, ON, 0, 0, 8MA),       // BT_SEC
+
 	PIN_CFG(DCLKREQ4, SSP1DI, 0, OFF,  ON, 0, 0, 8MA),			// BT_I2S_DO
+	/* SSP4 - I2S */
 	PIN_CFG(GPIO94, SSP1SYN, 0, OFF, ON, 0, 0, 8MA),			// BT_I2S_WS
 	PIN_CFG(GPIO93, SSP1CK, 0, OFF, ON, 0, 0, 8MA),				// BT_I2S_CLK
 
@@ -138,16 +139,16 @@ static struct __init pin_config board_pin_config[] = {
 	PIN_CFG(MMC1DAT1, MMC1DAT1, 0, OFF, ON, 0, 0, 8MA),		// WLAN_SDIO_DAT1
 	PIN_CFG(MMC1DAT2, MMC1DAT2, 0, OFF, ON, 0, 0, 8MA),		// WLAN_SDIO_DAT2
 	PIN_CFG(MMC1DAT3, MMC1DAT3, 0, OFF, ON, 0, 0, 8MA),		// WLAN_SDIO_DAT3
-	PIN_CFG(MMC1CK, MMC1CK, 0, OFF, ON, 0, 0, 8MA),			// WLAN_SDIO_CLK
-	PIN_CFG(MMC1CMD, MMC1CMD, 0, OFF, ON, 0, 0, 8MA),		// WLAN_SDIO_CMD
-	PIN_CFG(MMC1RST, GPIO70, 0, ON, OFF, 0, 0, 8MA),			// WLAN_REG_ON
+	PIN_CFG(MMC1CK, MMC1CK, 0, OFF, ON, 0, 0, 8MA),				// WLAN_SDIO_CLK
+	PIN_CFG(MMC1CMD, MMC1CMD, 0, OFF, ON, 0, 0, 8MA),			// WLAN_SDIO_CMD
+	PIN_CFG(MMC1RST, GPIO70, 0, ON, OFF, 0, 0, 8MA),				// WLAN_REG_ON
 	PIN_CFG(GPIO07, GPIO7, 0, ON, OFF, 0, 0, 8MA),			// WLAN_HOST_WAKE
 	PIN_CFG(CAMCS1, ANA_SYS_REQ2, 0, ON, OFF, 0, 0, 8MA), 		// WLAN_CLK_REQ
 		
 	PIN_CFG(SPI0TXD, GPIO91, 0, OFF, OFF, 0, 0, 8MA), // KEY Expander INT
 	PIN_CFG(GPIO33, GPIO33, 0, OFF, OFF, 0, 0, 8MA), 			/* KEYEXPANDER_SCL*/	
 	PIN_CFG(GPIO34, GPIO34, 0, OFF, OFF, 0, 0, 8MA), 			/* KEYEXPANDER_SDA*/	
-		
+			
 	/* NFC */
 /*
 	PIN_CFG(SIMDET, GPIO56, 0, OFF, ON, 0, 0, 8MA), 			// NFC_SDA 
@@ -159,15 +160,25 @@ static struct __init pin_config board_pin_config[] = {
 	/* Sensor(Acceleromter,Magnetic,Proximity) */
 	PIN_CFG(GPIO15, GPIO15, 0, OFF, OFF, 0, 0, 8MA), 			/* SENSOR_SDA*/
 	PIN_CFG(GPIO32, GPIO32, 0, OFF, OFF, 0, 0, 8MA), 			/* SENSOR_SCL*/	
-	PIN_CFG(SPI0RXD, GPIO92, 0, OFF, ON, 0, 0, 8MA), 			/* PROXI_INT*/
-
-
-
+	PIN_CFG(ICUSBDM, GPIO122, 0, OFF, ON, 0, 0, 8MA), 			/* PROXI_INT*/
 	/* SIMCARD */
 	PIN_CFG(SIMRST, SIMRST, 0, OFF, ON, 0, 0, 8MA), 			//	SIM_RST
 	PIN_CFG(SIMDAT, SIMDAT, 0, OFF, ON, 0, 0, 8MA), 			//	SIM_IO
 	PIN_CFG(SIMCLK, SIMCLK, 0, OFF, ON, 0, 0, 8MA), 			//	SIM_CLK
 	
+/* // VE_GROUP ~	
+	PIN_CFG(SSPSYN, SIM2RST, 0, OFF, OFF, 0, 0, 8MA),
+	PIN_CFG(SSPDO, SIM2DAT, 0, OFF, OFF, 0, 0, 8MA),
+	PIN_CFG(SSPCK, SIM2CLK, 0, OFF, OFF, 0, 0, 8MA),
+*/ // ~ VE_GROUP
+
+// VE_GROUP ~
+// deactive code in current - 2012-06-05
+	/* Touch */	
+	PIN_CFG(SSPSYN, GPIO85, 0, OFF, OFF, 0, 0, 16MA), 			/* TSP_SDA*/
+	PIN_CFG(SSPDO, GPIO86, 0, OFF, ON, 0, 0, 8MA),				/* TSP_INT*/
+	PIN_CFG(SSPCK, GPIO87, 0, OFF, OFF, 0, 0, 16MA), 			/* TSP_SCL*/
+ // ~ VE_GROUP
 
 //@HW LCD part configuration
 	PIN_CFG(LCDCS0, LCDSCS0, 0, ON, OFF, 0, 0, 8MA),            //  LCD_CS
@@ -196,16 +207,10 @@ static struct __init pin_config board_pin_config[] = {
 	PIN_CFG(LCDRES, GPIO41, 0, OFF, OFF, 0, 0, 8MA), 			//	LCD_RST
 	PIN_CFG(LCDTE,  LCDTE,  0, OFF, ON,  0, 0, 8MA), 			//	LCD_FLM
 
-		/* Touch */	
-	PIN_CFG(SSPSYN, GPIO85, 0, OFF, OFF, 0, 0, 16MA), 			/* TSP_SDA*/
-	PIN_CFG(SSPDO, GPIO86, 0, OFF, ON, 0, 0, 8MA),				/* TSP_INT*/
-	PIN_CFG(SSPCK, GPIO87, 0, OFF, OFF, 0, 0, 16MA), 			/* TSP_SCL*/
-
 	PIN_CFG(DCLKREQ4, SSP1DI, 0, OFF,  ON, 0, 0, 8MA),			// BT_I2S_DO
 	/* SSP4 - I2S */
 	PIN_CFG(GPIO94, SSP1SYN, 0, OFF, ON, 0, 0, 8MA),			// BT_I2S_WS
 	PIN_CFG(GPIO93, SSP1CK, 0, OFF, ON, 0, 0, 8MA),				// BT_I2S_CLK
-
 
 };
 
@@ -213,18 +218,8 @@ static struct __init pin_config board_pin_config[] = {
 int __init pinmux_board_init(void)
 {
 	int i;
-	void __iomem *base = g_chip_pin_desc.base;
-
 	for (i=0; i<ARRAY_SIZE(board_pin_config); i++)
-	{
-			
 		pinmux_set_pin_config(&board_pin_config[i]);
-	}
 
-	// Work around to SIMDAT/SIM2DAT. Once we move to DTS, we don't need this
-	// We cannot use PIN_CFG because bit 12 is used (previously RESERVED)
-	writel(0x00001033, base + PADCTRLREG_SIMDAT_OFFSET);
-
-	printk("pinmux_board_init finished\n");
 	return 0;
 }

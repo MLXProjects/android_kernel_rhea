@@ -467,14 +467,14 @@ static struct bcm_keymap newKeymap[] = {
 	{BCM_KEY_ROW_5, BCM_KEY_COL_2, "unused", 0},
 	{BCM_KEY_ROW_5, BCM_KEY_COL_3, "unused", 0},
 	{BCM_KEY_ROW_5, BCM_KEY_COL_4, "Volume Down", KEY_VOLUMEDOWN},
-	{BCM_KEY_ROW_5, BCM_KEY_COL_5, "unused", 0},
+	{BCM_KEY_ROW_5, BCM_KEY_COL_5, "Home-Key", KEY_HOME},
 	{BCM_KEY_ROW_5, BCM_KEY_COL_6, "unused", 0},
 	{BCM_KEY_ROW_5, BCM_KEY_COL_7, "unused", 0},
 	{BCM_KEY_ROW_6, BCM_KEY_COL_0, "unused", 0},
 	{BCM_KEY_ROW_6, BCM_KEY_COL_1, "unused", 0},
 	{BCM_KEY_ROW_6, BCM_KEY_COL_2, "unused", 0},
 	{BCM_KEY_ROW_6, BCM_KEY_COL_3, "unused", 0},
-	{BCM_KEY_ROW_6, BCM_KEY_COL_4, "unused", 0},
+	{BCM_KEY_ROW_6, BCM_KEY_COL_4, "unused", 0}, 
 	{BCM_KEY_ROW_6, BCM_KEY_COL_5, "unused", 0},
 	{BCM_KEY_ROW_6, BCM_KEY_COL_6, "unused", 0},
 	{BCM_KEY_ROW_6, BCM_KEY_COL_7, "unused", 0},
@@ -526,7 +526,7 @@ static const unsigned int cust_keymap[] = {
 	KEY(3, 0, KEY_S),
 	KEY(3, 1, KEY_A),
 	KEY(3, 2, KEY_ENTER),
-	KEY(3, 3, KEY_COMMA),
+	KEY(3, 3, KEY_QUESTION),
 	KEY(3, 4, KEY_M),
 	KEY(3, 5, KEY_N),
 	KEY(3, 6, KEY_RESERVED),
@@ -539,8 +539,8 @@ static const unsigned int cust_keymap[] = {
 	KEY(4, 5, KEY_LEFTSHIFT),
 	KEY(4, 6, KEY_RESERVED),
 	KEY(4, 7, KEY_RESERVED),
-	KEY(5, 0, KEY_MAIL ),  /*Customized*/
-	KEY(5, 1, KEY_IMAGES ), /* ChatOn*/
+	KEY(5, 0, KEY_IMAGES), /* ChatOn*/
+	KEY(5, 1, KEY_MAIL), /*Customized*/
 	KEY(5, 2, KEY_DOT),
 	KEY(5, 3, KEY_SPACE),
 	KEY(5, 4, KEY_RESERVED),
@@ -811,6 +811,16 @@ static struct i2c_board_info __initdata rhea_ss_i2cgpio1_board_info[] = {
 	},
 #endif
 
+
+#if defined (CONFIG_TOUCHSCREEN_TMA140_CORIPLUS)
+static struct i2c_board_info __initdata synatics_i2c_devices[] = {
+	{
+				I2C_BOARD_INFO("cypress-tma140", 0x20),
+				.irq = gpio_to_irq(TSP_INT_GPIO_PIN),
+	},
+};
+#endif
+
 #if defined  (CONFIG_SENSORS_HSCDTD006A) || defined(CONFIG_SENSORS_HSCDTD008A) 
 	{
 		I2C_BOARD_INFO("hscd_i2c", 0x0c),
@@ -1040,11 +1050,11 @@ static struct i2c_board_info __initdata mpu6050_info[] =
 static unsigned int  rheass_button_adc_values [3][2] = 
 {
 	/* SEND/END Min, Max*/
-        {0,     95},
+        {0,     99},
 	/* Volume Up  Min, Max*/
-        {96,    200},
+        {100,    240},
 	/* Volue Down Min, Max*/
-        {201,   480},
+        {241,   500},
 };
 
 static struct kona_headset_pd headset_data = {
@@ -1498,7 +1508,7 @@ static struct platform_device touchkeyled_device = {
 	|| defined(CONFIG_MACH_RHEA_FARADAY_EB10) \
 	|| defined(CONFIG_MACH_RHEA_DALTON) || defined(CONFIG_MACH_RHEA_RAY_EDN2X) || defined(CONFIG_MACH_RHEA_SS) \
 	|| defined(CONFIG_MACH_RHEA_RAY_DEMO) || defined(CONFIG_MACH_RHEA_SS_ZANIN)
-#define GPIO_SIM2LDO_EN		99
+#define GPIO_SIM2LDO_EN		86
 #endif
 #ifdef CONFIG_GPIO_PCA953X
 #define GPIO_SIM2LDOVSET	(KONA_MAX_GPIO + 7)
@@ -1918,11 +1928,13 @@ static void __init rhea_ray_add_i2c_devices (void)
 			ARRAY_SIZE(mpu6050_info));
 #endif
 
-i2c_register_board_info(0x3, zinitix_i2c_devices,
-				ARRAY_SIZE(zinitix_i2c_devices)); //PSJ
-
 i2c_register_board_info(0x4, rhea_ss_i2cgpio1_board_info,
 				ARRAY_SIZE(rhea_ss_i2cgpio1_board_info));
+
+#if defined(CONFIG_TOUCHSCREEN_TMA140_CORIPLUS)
+i2c_register_board_info(0x3, synatics_i2c_devices,
+				ARRAY_SIZE(synatics_i2c_devices)); 
+#endif	
 #if defined(CONFIG_BCMI2CNFC)
 	i2c_register_board_info(0x5, bcmi2cnfc, ARRAY_SIZE(bcmi2cnfc));
 #endif
@@ -2364,7 +2376,8 @@ void __init board_map_io(void)
 
 late_initcall(rhea_ray_add_lateInit_devices);
 
-MACHINE_START(RHEA, "rhea_ss_zanin")
+
+MACHINE_START(RHEA, "rhea_ss_coriplus")
 	.map_io = board_map_io,
 	.init_irq = kona_init_irq,
 	.timer  = &kona_timer,
