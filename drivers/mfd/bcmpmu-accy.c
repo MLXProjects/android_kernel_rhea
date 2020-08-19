@@ -483,8 +483,9 @@ int bcmpmu_set_uas_switch_enable(u32 uas_switch, bool enable)
 }
 EXPORT_SYMBOL_GPL(bcmpmu_set_uas_switch_enable);
 
-
-extern void set_tsp_for_ta_detect(int state);//TSP Charging[JG]
+/*extern*/ void set_tsp_for_ta_detect(int state){ //; TSP Charging[JG]
+	pr_accy(FLOW, "FIX THIS: set_tsp_for_ta_detect not sent, state %d", state);
+}
 int tsp_charger_type_status=0;//TSP Charging[JG]
 
 static void send_usb_event(struct bcmpmu *pmu,
