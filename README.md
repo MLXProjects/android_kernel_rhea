@@ -8,4 +8,4 @@ Also, trying to get the corsica kernel to work correctly is hard because I don't
 
 # How to compile this? 
 I recommend using the arm-linux-androideabi 4.6 toolchain (from AOSP or another source is fine), but IIRC 4.9 arm-eabi works fine. Other toolchains weren't tested. 
-After setting ARCH=arm and CROSS_COMPILE=/path/to/your/toolchain/bin/arm-blah- you need to make using *cyanogenmod_zanin_defconfig*.
+After setting ARCH=arm and CROSS_COMPILE=/path/to/your/toolchain/bin/arm-blah- you need to make using *cyanogenmod_coriplus_defconfig*.
