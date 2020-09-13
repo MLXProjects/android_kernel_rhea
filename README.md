@@ -7,7 +7,7 @@ Touchscreen works, bluetooth is (sort-of) working and there's an effort to make 
 Power management seems to be mostly working as the power on/off/suspend works, but at suspend the phone may sometimes shutdown.  
 I suspect this is a touch driver issue, as before modding it the suspend worked nicely. Also, as the kernel had DT2W (double tap to wake) support at the other touch driver, that may conflict with current touch (which hasn't dt2w support).  
 Bluetooth driver stops responding after startup and restarts itself after searching for devices and/or trying to pair.  
-Wi-Fi driver can initialize, but fails at some point and just doesn't work from Android. Needs to be tested on a simpler environment (eg. booting the kernel and starting adbd & a shell instead of Android framework). 
+Wi-Fi driver seems to work correctly.
 # coriplus hardware
 Processor: Broadcom BCM21654 (not the G variant!)  
 RAM: 512MB (450~480MB available from the system)  
