@@ -1,0 +1,9 @@
+*.o
+*.cmd
+.config
+.config.old
+*.order
+*.builtin
+.tmp_*
+.missing-syscalls.d
+usr/.initramfs_data.cpio.d
